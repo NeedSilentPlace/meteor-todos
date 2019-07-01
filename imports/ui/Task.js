@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import { Tasks } from '../api/tasks';
+import classnames from 'classnames';
 
 export default function Task(props) {
   function toggleChecked() {
@@ -9,8 +9,13 @@ export default function Task(props) {
   function deleteThisTask() {
     Meteor.call('tasks.remove', props.task._id);
   }
-
-  const taskClassName = props.task.checked ? 'checked' : '';
+  function togglePrivate() {
+    Meteor.call('tasks.setPrivate', props.task._id, !props.task.private);
+  }
+  const taskClassName = classnames({
+    checked: props.task.checked,
+    private: props.task.private,
+  });
 
   return (
     <li className={taskClassName}>
@@ -24,6 +29,11 @@ export default function Task(props) {
         checked={!!props.task.checked}
         onClick={toggleChecked}
       />
+      {props.showPrivateButton ? (
+        <button className="toggle-private" onClick={togglePrivate}>
+          {props.task.private ? 'Private' : 'Public'}
+        </button>
+      ) : ''}
       <span className="text">
         <strong>{props.task.username} : {props.task.text}</strong>
       </span>
