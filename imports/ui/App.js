@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import { Tasks } from '../api/tasks';  //api
 
 import Task from './Task'; //ui
+import AccountsUiWrapper from './AccountsUiWrapper';
 
 function App(props) {
   const [text, setText] = useState('');
@@ -14,10 +15,12 @@ function App(props) {
   }
   function handleSubmit() {
     event.preventDefault();
- 
+    console.log(Meteor);
     Tasks.insert({
       text,
       createdAt: new Date(),
+      owner: Meteor.userId(),
+      username: Meteor.user().username,
     });
 
     setText('');
@@ -51,14 +54,17 @@ function App(props) {
           Hide Completed Tasks
         </label>
 
-        <form className="new-task" onSubmit={handleSubmit} >
-          <input
-            type="text"
-            value={text}
-            onChange={(ev) => setText(ev.target.value)}
-            placeholder="Type to add new tasks"
-        />
-        </form>
+        <AccountsUiWrapper />
+        {props.currentUser ? (
+          <form className="new-task" onSubmit={handleSubmit} >
+            <input
+              type="text"
+              value={text}
+              onChange={(ev) => setText(ev.target.value)}
+              placeholder="Type to add new tasks"
+            />
+          </form>
+        ) : ''}
       </header>
 
       <ul>
@@ -72,5 +78,6 @@ export default withTracker(() => {
   return {
     tasks: Tasks.find({}, { sort: { createdAt: -1 } }).fetch(),
     incompleteCount: Tasks.find({ checked: { $ne: true } }).count(),
+    currentUser: Meteor.user(),
   }
 })(App);

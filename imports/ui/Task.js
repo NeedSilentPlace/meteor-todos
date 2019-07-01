@@ -26,8 +26,9 @@ export default function Task(props) {
         checked={!!props.task.checked}
         onClick={toggleChecked}
       />
-
-      <span className="text">{props.task.text}</span>
+      <span className="text">
+        <strong>{props.task.username} : {props.task.text}</strong>
+      </span>
     </li>
   );
 };
