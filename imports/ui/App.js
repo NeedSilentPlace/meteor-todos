@@ -15,14 +15,7 @@ function App(props) {
   }
   function handleSubmit() {
     event.preventDefault();
-    console.log(Meteor);
-    Tasks.insert({
-      text,
-      createdAt: new Date(),
-      owner: Meteor.userId(),
-      username: Meteor.user().username,
-    });
-
+    Meteor.call('tasks.insert', text);
     setText('');
     //then 으로 DB에 저장된 후에 DOM을 수정하는게 맞지 않을까?
   }
