@@ -19,7 +19,7 @@ Meteor.methods({
   'tasks.insert'(text) {
     check(text, String);
     if(!this.userId) {
-      throw new Meteor.Error('non-authorized');
+      throw new Meteor.Error('not-authorized');
     }
     Tasks.insert({
       text,
